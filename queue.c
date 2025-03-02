@@ -102,7 +102,18 @@ int q_size(struct list_head *head)
 /* Delete the middle node in queue */
 bool q_delete_mid(struct list_head *head)
 {
-    // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
+    // https://leetcode.com/problems/delete-theㄈ-middle-node-of-a-linked-list/
+    if (!head || list_empty(head))
+        return false;
+    struct list_head *fast = head->next;
+    struct list_head *slow = head->next;
+    while (fast != head && fast->next != head) {
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+    list_del(slow);
+    free(list_entry(slow, element_t, list)->value);
+    free(list_entry(slow, element_t, list));
     return true;
 }
 
@@ -110,6 +121,28 @@ bool q_delete_mid(struct list_head *head)
 bool q_delete_dup(struct list_head *head)
 {
     // https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
+    if (!head || list_empty(head))
+        return false;
+    struct list_head **indirect = &head->next;
+    while (*indirect != head) {
+        if ((*indirect)->next != head &&
+            !strcmp(list_entry(*indirect, element_t, list)->value,
+                    list_entry((*indirect)->next, element_t, list)->value)) {
+            struct list_head *tmp = *indirect;
+            char *sp = strdup(list_entry(*indirect, element_t, list)->value);
+            while (tmp != head &&
+                   !strcmp(sp, list_entry(tmp, element_t, list)->value)) {
+                struct list_head *toDel = tmp;
+                tmp = tmp->next;
+                list_del(toDel);
+                free(list_entry(toDel, element_t, list)->value);
+                free(list_entry(toDel, element_t, list));
+            }
+            free(sp);
+        } else {
+            indirect = &(*indirect)->next;
+        }
+    }
     return true;
 }
 
