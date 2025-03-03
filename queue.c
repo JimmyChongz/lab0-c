@@ -24,8 +24,7 @@ void q_free(struct list_head *head)
     struct list_head *tmp;
     struct list_head *cur;
     list_for_each_safe (cur, tmp, head) {
-        free(list_entry(cur, element_t, list)->value);
-        free(list_entry(cur, element_t, list));
+        q_release_element(list_entry(cur, element_t, list));
     }
     free(head);
 }
@@ -112,8 +111,7 @@ bool q_delete_mid(struct list_head *head)
         slow = slow->next;
     }
     list_del(slow);
-    free(list_entry(slow, element_t, list)->value);
-    free(list_entry(slow, element_t, list));
+    q_release_element(list_entry(slow, element_t, list));
     return true;
 }
 
@@ -135,8 +133,7 @@ bool q_delete_dup(struct list_head *head)
                 struct list_head *toDel = tmp;
                 tmp = tmp->next;
                 list_del(toDel);
-                free(list_entry(toDel, element_t, list)->value);
-                free(list_entry(toDel, element_t, list));
+                q_release_element(list_entry(toDel, element_t, list));
             }
             free(sp);
         } else {
