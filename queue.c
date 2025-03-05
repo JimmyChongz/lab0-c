@@ -209,18 +209,18 @@ int q_ascend(struct list_head *head)
     // https://leetcode.com/problems/remove-nodes-from-linked-list/
     if (!head || list_empty(head))
         return 0;
-    struct list_head *cur = head->prev;
-    struct list_head *toDel = cur->prev;
-    while (toDel != head) {
-        struct list_head *prev = toDel->prev;
-        if (strcmp(list_entry(toDel, element_t, list)->value,
-                   list_entry(cur, element_t, list)->value) >= 0) {
-            list_del(toDel);
-            q_release_element(list_entry(toDel, element_t, list));
+    struct list_head *min = head->prev;
+    struct list_head *cur = min->prev;
+    while (cur != head) {
+        struct list_head *prev = cur->prev;
+        if (strcmp(list_entry(cur, element_t, list)->value,
+                   list_entry(min, element_t, list)->value) >= 0) {
+            list_del(cur);
+            q_release_element(list_entry(cur, element_t, list));
         } else {
-            cur = cur->prev;
+            min = min->prev;
         }
-        toDel = prev;
+        cur = prev;
     }
     return q_size(head);
 }
@@ -232,18 +232,18 @@ int q_descend(struct list_head *head)
     // https://leetcode.com/problems/remove-nodes-from-linked-list/
     if (!head || list_empty(head))
         return 0;
-    struct list_head *cur = head->prev;
-    struct list_head *toDel = cur->prev;
-    while (toDel != head) {
-        struct list_head *prev = toDel->prev;
-        if (strcmp(list_entry(toDel, element_t, list)->value,
-                   list_entry(cur, element_t, list)->value) <= 0) {
-            list_del(toDel);
-            q_release_element(list_entry(toDel, element_t, list));
+    struct list_head *max = head->prev;
+    struct list_head *cur = max->prev;
+    while (cur != head) {
+        struct list_head *prev = cur->prev;
+        if (strcmp(list_entry(cur, element_t, list)->value,
+                   list_entry(max, element_t, list)->value) <= 0) {
+            list_del(cur);
+            q_release_element(list_entry(cur, element_t, list));
         } else {
-            cur = cur->prev;
+            max = max->prev;
         }
-        toDel = prev;
+        cur = prev;
     }
     return q_size(head);
 }
