@@ -163,6 +163,8 @@ void q_swap(struct list_head *head)
         return;
     struct list_head *cur;
     list_for_each (cur, head) {
+        if (cur->next == head)
+            break;
         list_move(cur, cur->next);
     }
 }
