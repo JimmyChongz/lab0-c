@@ -196,9 +196,9 @@ void q_reverseK(struct list_head *head, int k)
 }
 
 /* Merge @right list to @left list in ascending/descending order */
-struct list_head *mergeTwoLists(struct list_head *left,
-                                struct list_head *right,
-                                bool descend)
+struct list_head *merge_two_lists(struct list_head *left,
+                                  struct list_head *right,
+                                  bool descend)
 {
     if (!left || list_empty(left))
         return right;
@@ -248,7 +248,7 @@ void q_sort(struct list_head *head, bool descend)
     q_sort(head, descend);
     q_sort(&left, descend);
 
-    struct list_head *merged = mergeTwoLists(&left, head, descend);
+    struct list_head *merged = merge_two_lists(&left, head, descend);
     INIT_LIST_HEAD(head);
     list_splice(merged, head);
 }
@@ -304,5 +304,18 @@ int q_descend(struct list_head *head)
 int q_merge(struct list_head *head, bool descend)
 {
     // https://leetcode.com/problems/merge-k-sorted-lists/
-    return 0;
+    if (!head || list_empty(head))
+        return 0;
+    if (list_is_singular(head))
+        return list_first_entry(head, queue_contex_t, chain)->size;
+
+    queue_contex_t *cur, *next;
+    queue_contex_t *merged = list_first_entry(head, queue_contex_t, chain);
+    list_for_each_entry_safe(cur, next, head, chain) {
+        if (&cur->chain == head->next)
+            continue;
+        merged->size += cur->size;
+        merge_two_lists(merged->q, cur->q, descend);
+    }
+    return merged->size;
 }
