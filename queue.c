@@ -196,15 +196,18 @@ void q_reverseK(struct list_head *head, int k)
 }
 
 /* Merge @right list to @left list in ascending/descending order */
-struct list_head *merge_two_lists(struct list_head *left,
-                                  struct list_head *right,
-                                  bool descend)
+void merge_two_lists(struct list_head *left,
+                     struct list_head *right,
+                     bool descend)
 {
-    if (!left || list_empty(left))
-        return right;
-    if (!right || list_empty(right))
-        return left;
-
+    if (!left || !right)
+        return;
+    if (list_empty(right))
+        return;
+    if (list_empty(left)) {
+        list_splice_init(right, left);
+        return;
+    }
     LIST_HEAD(merged);
     while (!list_empty(left) && !list_empty(right)) {
         element_t *curLeft = list_entry(left->next, element_t, list);
@@ -223,9 +226,7 @@ struct list_head *merge_two_lists(struct list_head *left,
     if (!list_empty(right)) {
         list_splice_tail_init(right, &merged);
     }
-    list_splice(&merged, left);
-
-    return left;
+    list_splice_init(&merged, left);
 }
 
 /* Sort elements of queue in ascending/descending order */
@@ -248,9 +249,9 @@ void q_sort(struct list_head *head, bool descend)
     q_sort(head, descend);
     q_sort(&left, descend);
 
-    struct list_head *merged = merge_two_lists(&left, head, descend);
+    merge_two_lists(&left, head, descend);
     INIT_LIST_HEAD(head);
-    list_splice(merged, head);
+    list_splice(&left, head);
 }
 
 /* Remove every node which has a node with a strictly less value anywhere to
