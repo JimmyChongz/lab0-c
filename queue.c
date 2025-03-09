@@ -1,8 +1,8 @@
+#include "queue.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "queue.h"
+#include <time.h>
 
 /* Create an empty queue */
 struct list_head *q_new()
@@ -319,4 +319,37 @@ int q_merge(struct list_head *head, bool descend)
         merge_two_lists(merged->q, cur->q, descend);
     }
     return merged->size;
+}
+
+/**
+ * q_shuffle() - Randomly shuffle the elements in the queue
+ * @head: header of queue
+ *
+ * This function randomly rearranges the elements in the queue using
+ * the Fisher-Yates shuffle algorithm, ensuring each permutation has
+ * an equal probability of occurring.
+ *
+ * No effect if queue is NULL or empty. If there has only one element, do
+ * nothing.
+ */
+void q_shuffle(struct list_head *head)
+{
+    if (!head || list_empty(head) || list_is_singular(head)) {
+        return;
+    }
+    int len = q_size(head);
+    srand(time(NULL));
+    LIST_HEAD(new);
+
+    while (len) {
+        int random = rand() % len;
+        struct list_head *cur = head->next;
+        while (random--) {
+            cur = cur->next;
+        }
+        struct list_head *tmp = cur;
+        list_move_tail(tmp, &new);
+        len--;
+    }
+    list_splice_tail(&new, head);
 }
