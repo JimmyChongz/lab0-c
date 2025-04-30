@@ -338,7 +338,6 @@ void q_shuffle(struct list_head *head)
         return;
     }
     int len = q_size(head);
-    srand(time(NULL));
     LIST_HEAD(new);
 
     while (len) {
